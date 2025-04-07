@@ -5,11 +5,14 @@ import numpy as np
 import os
 
 app = Flask(__name__)
-model = load_model('model.h5')
-class_names = ['cellulitis','nail-fungus','ringworm','chickenpox','shingles']  # Change based on print(train_data.class_indices)
+class_names = ['cellulitis', 'nail-fungus', 'ringworm', 'chickenpox', 'shingles']
 
 UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Use safe absolute path for the model
+MODEL_PATH = os.path.join(os.path.dirname(__file__), 'model.h5')
+model = load_model(MODEL_PATH)
 
 @app.route('/')
 def index():
@@ -32,7 +35,7 @@ def predict():
     class_index = np.argmax(prediction[0])
     predicted_label = class_names[class_index]
 
-    return render_template('index.html', prediction=predicted_label, image_path=file_path)
+    print("Prediction index:", class_index)
+    print("Prediction label:", predicted_label)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    return render_template('index.html', prediction=predicted_label, image_path=file_path)
